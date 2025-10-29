@@ -1,0 +1,32 @@
+# Create .gitignore file
+cat > .gitignore << 'EOF'
+# CodeIgniter 4
+/writable/
+/env
+.env
+/public/uploads/
+/public/assets/cache/
+
+# Composer
+/vendor/
+/composer.lock
+
+# XAMPP
+/.htaccess
+
+# IDE
+/.vscode/
+/.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment files (except example)
+!.env.example
+EOF
