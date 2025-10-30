@@ -19,7 +19,7 @@ use App\Controllers\Profile;
 
 
 // Load Homepage (GET is correct)
-$routes->get('/', [TaskController::class, 'index']);
+// $routes->get('/', [TaskController::class, 'index']);
 
 // Create New Task (POST is correct)
 $routes->post('create', [TaskController::class, 'create']);
@@ -41,7 +41,7 @@ service('auth')->routes($routes);
 
 $routes->group('', ['filter' => 'auth'], function($routes){
     // Existing expense routes
-    $routes->get('expenses', [ExpenseController::class, 'index']);
+    $routes->get('/', [ExpenseController::class, 'index']);
     $routes->get('expenses/create', [ExpenseController::class, 'create']);
     $routes->post('expenses/store', [ExpenseController::class, 'store']);
     $routes->get('expenses/view/(:num)', [ExpenseController::class, 'view']);

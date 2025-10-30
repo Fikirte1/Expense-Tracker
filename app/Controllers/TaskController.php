@@ -28,14 +28,14 @@ class TaskController extends Controller
     public function index()
     {
         $this->SendTestEmail();
-        // Fetch all tasks, ordered by newest first
-        $data = [
-            'tasks' => $this->taskModel->orderBy('created_at', 'DESC')->findAll(),
-            'title' => 'My Task List', // Keep the title data for the view
-        ];
+    //     // Fetch all tasks, ordered by newest first
+    //     $data = [
+    //         'tasks' => $this->taskModel->orderBy('created_at', 'DESC')->findAll(),
+    //         'title' => 'My Task List', // Keep the title data for the view
+    //     ];
 
-        return view('task_list', $data);
-    }
+    //     return view('task_list', $data);
+     }
 
     // 2. Handle adding a new task (POST request)
     public function create()

@@ -315,21 +315,20 @@
 
         <!-- Navigation Menu -->
         <ul class="nav flex-column flex-grow-1 px-3 mb-4">
-            <!-- <li class="nav-item">
+            <li class="nav-item">
                 <a class="nav-link d-flex align-items-center <?= current_url() === base_url() ? 'active' : '' ?>" href="<?= base_url() ?>">
                     <i class="fas fa-home"></i>
-                    <span class="menu-text ms-3">Dashboard</span>
-                    <span class="nav-badge">New</span>
+                    <span class="menu-text ms-3">Expenses</span>
+                    <!-- <span class="nav-badge">New</span> -->
                 </a>
-            </li> -->
+            </li>
           
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link d-flex align-items-center <?= strpos(current_url(), 'expenses') !== false ? 'active' : '' ?>" href="<?= site_url('expenses') ?>">
                     <i class="fas fa-receipt"></i>
                     <span class="menu-text ms-3">Expenses</span>
-                    <!-- <span class="nav-badge">15</span> -->
                 </a>
-            </li>
+            </li> -->
 
             <li class="nav-item">
                 <a class="nav-link d-flex align-items-center <?= strpos(current_url(), 'income') !== false ? 'active' : '' ?>" href="<?= site_url('income') ?>">

@@ -149,6 +149,22 @@
             font-weight: 600;
         }
 
+        /* Budget Alert Styles */
+        .budget-alert {
+            border-left: 4px solid #dc3545;
+            background: rgba(220, 53, 69, 0.05);
+        }
+
+        .budget-warning {
+            border-left: 4px solid #ffc107;
+            background: rgba(255, 193, 7, 0.05);
+        }
+
+        .budget-info {
+            border-left: 4px solid #17a2b8;
+            background: rgba(23, 162, 184, 0.05);
+        }
+
         /* Animations */
         .animate-fade-in {
             animation: fadeIn 0.6s ease-in;
@@ -266,21 +282,95 @@
                 </div>
             </div>
 
-            <!-- Rest of your budget page content remains the same -->
-            <!-- Budget Alerts -->
-            <?php if (!empty($budget_alerts)): ?>
+            <!-- Budget Alerts Section -->
             <div class="row mb-4 animate-fade-in">
                 <div class="col-12">
-                    <?php foreach($budget_alerts as $alert): ?>
-                    <div class="alert alert-<?= $alert['type'] ?> alert-dismissible fade show">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        <?= $alert['message'] ?>
+                    <!-- Overspending Alert -->
+                    <?php if (($total_remaining ?? 0) < 0): ?>
+                    <div class="alert budget-alert alert-dismissible fade show">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-exclamation-triangle fa-2x me-3 text-danger"></i>
+                            <div>
+                                <h5 class="alert-heading mb-1">Budget Overspent!</h5>
+                                <p class="mb-0">You have exceeded your budget by <strong class="currency-birr">Br <?= number_format(abs($total_remaining ?? 0), 2) ?></strong>. Consider adjusting your spending.</p>
+                            </div>
+                        </div>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
-                    <?php endforeach; ?>
+                    <?php endif; ?>
+
+                    <!-- High Utilization Alert -->
+                    <?php if (($total_budget ?? 0) > 0 && (($total_spent ?? 0) / ($total_budget ?? 1)) > 0.8): ?>
+                    <div class="alert budget-warning alert-dismissible fade show">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-exclamation-circle fa-2x me-3 text-warning"></i>
+                            <div>
+                                <h5 class="alert-heading mb-1">High Budget Utilization</h5>
+                                <p class="mb-0">You've used <?= number_format((($total_spent ?? 0) / ($total_budget ?? 1)) * 100, 1) ?>% of your budget. Only <strong class="currency-birr">Br <?= number_format(($total_budget ?? 0) - ($total_spent ?? 0), 2) ?></strong> remaining.</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <?php endif; ?>
+
+                    <!-- Low Savings Alert -->
+                    <?php if (($total_income ?? 0) > 0 && ((($total_income ?? 0) - ($total_spent ?? 0)) / ($total_income ?? 1)) < 0.1): ?>
+                    <div class="alert budget-info alert-dismissible fade show">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-info-circle fa-2x me-3 text-info"></i>
+                            <div>
+                                <h5 class="alert-heading mb-1">Low Savings Rate</h5>
+                                <p class="mb-0">Your savings rate is <?= number_format(((($total_income ?? 0) - ($total_spent ?? 0)) / ($total_income ?? 1)) * 100, 1) ?>%. Consider increasing your savings for better financial health.</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <?php endif; ?>
+
+                    <!-- Individual Category Alerts -->
+                    <?php if (!empty($budgets)): ?>
+                        <?php foreach($budgets as $budget): ?>
+                            <?php if ($budget['percentage'] > 100): ?>
+                            <div class="alert budget-alert alert-dismissible fade show">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-fire fa-2x me-3 text-danger"></i>
+                                    <div>
+                                        <h5 class="alert-heading mb-1">Over Budget: <?= esc($budget['category_name']) ?></h5>
+                                        <p class="mb-0">You've exceeded your <strong><?= esc($budget['category_name']) ?></strong> budget by <strong class="currency-birr">Br <?= number_format(abs($budget['remaining']), 2) ?></strong> (<?= number_format($budget['percentage'], 1) ?>% used).</p>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            <?php elseif ($budget['percentage'] > 80): ?>
+                            <div class="alert budget-warning alert-dismissible fade show">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-clock fa-2x me-3 text-warning"></i>
+                                    <div>
+                                        <h5 class="alert-heading mb-1">Approaching Limit: <?= esc($budget['category_name']) ?></h5>
+                                        <p class="mb-0">Your <strong><?= esc($budget['category_name']) ?></strong> budget is <?= number_format($budget['percentage'], 1) ?>% used. Only <strong class="currency-birr">Br <?= number_format($budget['remaining'], 2) ?></strong> remaining.</p>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+
+                    <!-- No Budget Alert -->
+                    <?php if (empty($budgets)): ?>
+                    <div class="alert budget-info alert-dismissible fade show">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-lightbulb fa-2x me-3 text-info"></i>
+                            <div>
+                                <h5 class="alert-heading mb-1">No Budgets Set</h5>
+                                <p class="mb-0">You haven't set any budgets for <?= date('F Y', mktime(0, 0, 0, $current_month, 1, $current_year)) ?>. Create your first budget to start tracking your expenses effectively.</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
-            <?php endif; ?>
 
             <!-- Quick Actions & Stats -->
             <div class="row mb-4 animate-fade-in">
@@ -532,30 +622,9 @@
         </div>
     </main>
 
-    <!-- Modals Section (Keep this in the main file since it's page-specific) -->
+    <!-- Modals Section -->
     <?= $this->include('budget/modals') ?>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // All your JavaScript code remains the same
-        // Global functions
-        function showQuickAdd() {
-            const section = document.getElementById('quickAddSection');
-            if (section) {
-                section.style.display = section.style.display === 'none' ? 'block' : 'none';
-            }
-        }
-
-        function hideQuickAdd() {
-            const section = document.getElementById('quickAddSection');
-            if (section) {
-                section.style.display = 'none';
-            }
-        }
-
-        // ... rest of your JavaScript code
-        // (Keep all the JavaScript functions as they were)
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Global functions
@@ -1025,7 +1094,7 @@
                     } catch (error) {
                         console.log('Alert already dismissed');
                     }
-                }, 5000);
+                }, 8000); // Increased to 8 seconds for budget alerts
             });
 
             // Animate progress bars
@@ -1057,7 +1126,6 @@
             window.location.href = `<?= site_url('budget') ?>?year=${year}&month=${month}`;
         }
 
-        // Fixed showAlert function
         function showAlert(type, message) {
             // Create alert element
             const alertDiv = document.createElement('div');
